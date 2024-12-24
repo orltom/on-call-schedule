@@ -1,4 +1,4 @@
-[![CI](https://github.com/orltom/on-call-schedule/actions/workflows/github-actions-ci/badge.svg?branch=main)](https://github.com/orltom/on-call-schedule/actions/workflows/github-actions-ci.yaml)
+[![CI](https://github.com/orltom/on-call-schedule/actions/workflows/github-actions-ci.yaml/badge.svg)](https://github.com/orltom/on-call-schedule/actions/workflows/github-actions-ci.yaml)
 [![License](https://img.shields.io/github/license/orltom/on-call-schedule)](/LICENSE)
 
 # On-Call Schedule
