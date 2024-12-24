@@ -11,6 +11,9 @@ linters:
     - lll
     - mnd
     - gomnd
+    - testpackage
+    - wsl
+    - paralleltest
 
 linters-settings:
   goimports:
@@ -52,3 +55,6 @@ issues:
     - path: cmd/.*
       linters:
         - forbidigo
+    - path: _test.go
+      linters:
+        - funlen

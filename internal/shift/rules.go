@@ -27,7 +27,7 @@ func InvolvedInLastSift(e apis.Employee, shifts []apis.Shift, _ time.Time, _ tim
 	}
 
 	lastShift := shifts[len(shifts)-1]
-	if lastShift.Primary.Name == e.Name || lastShift.Secondary.Name == e.Name {
+	if lastShift.Primary == e.ID || lastShift.Secondary == e.ID {
 		return true
 	}
 

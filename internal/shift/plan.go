@@ -41,7 +41,7 @@ func (sr *ShiftRotation) Plan(start time.Time, end time.Time, rotation time.Dura
 		secondary := sr.findSecondary(shiftplan, s, e)
 		sr.team = remove(sr.team, secondary)
 
-		shift := apis.Shift{Start: s, End: e, Primary: primary, Secondary: secondary}
+		shift := apis.Shift{Start: s, End: e, Primary: primary.ID, Secondary: secondary.ID}
 		shiftplan = append(shiftplan, shift)
 
 		sr.team = append(sr.team, secondary, primary)
