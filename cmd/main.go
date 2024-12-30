@@ -24,29 +24,37 @@ func main() {
 			run:         RunCreateShiftPlan,
 		},
 	}
+
+	var showHelp bool
+	flag.BoolVar(&showHelp, "h", false, "help for ocsctl")
 	flag.Usage = func() {
-		_, _ = fmt.Fprintf(os.Stderr, `ocs helps to create and sync on-call shifts
-
-Usage:
-  ocs [command]
-
-Available Commands:
-`)
-		for _, c := range commands {
-			_, _ = fmt.Fprintf(os.Stderr, "  %s\t%s\n", c.name, c.description)
+		fmt.Fprintf(os.Stdout, "%s helps to create and sync on-call shifts\n", os.Args[0])
+		fmt.Fprintf(os.Stdout, "Usage:\n")
+		fmt.Fprintf(os.Stdout, "  %s\t[command] [flags]\n", os.Args[0])
+		fmt.Fprintf(os.Stdout, "\nAvailable Commands:\n")
+		for idx := range commands {
+			fmt.Fprintf(os.Stdout, "  %s    %s\n", commands[idx].name, commands[idx].description)
 		}
+		fmt.Fprintf(os.Stdout, "\nFlags:\n")
+		flag.PrintDefaults()
+		fmt.Fprintf(os.Stdout, "\nUse \"%s [command] -h\" for more information about a command\n", os.Args[0])
 	}
 	flag.Parse()
 
+	if showHelp {
+		flag.Usage()
+		os.Exit(0)
+	}
+
 	if len(flag.Args()) < 1 {
 		flag.Usage()
-		_, _ = fmt.Fprintf(os.Stderr, "\n\nError: missing command")
+		_, _ = fmt.Fprintf(os.Stderr, "\n\nError: missing command\n")
 		os.Exit(128)
 	}
 
 	cmd := flag.Args()[0]
 	if err := runCommand(cmd, commands); err != nil {
-		_, _ = fmt.Fprintf(os.Stderr, "\n\nError: %s", err.Error())
+		fmt.Fprintf(os.Stderr, "\n\nError: %s\n", err.Error())
 		os.Exit(128)
 	}
 }
