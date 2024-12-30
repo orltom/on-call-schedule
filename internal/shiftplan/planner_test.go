@@ -19,20 +19,13 @@ func TestPlanner_Plan(t *testing.T) {
 		employees []apis.Employee
 		args      args
 		want      []apis.Shift
+		wantErr   bool
 	}{
 		{
 			name: "Without declared holidays, a daily schedule should be generated according to the order of the employees",
 			employees: []apis.Employee{
-				{
-					ID:           "a@test.ch",
-					Name:         "a",
-					VacationDays: nil,
-				},
-				{
-					ID:           "b@test.ch",
-					Name:         "b",
-					VacationDays: nil,
-				},
+				{ID: "a@test.ch", Name: "a", VacationDays: nil},
+				{ID: "b@test.ch", Name: "b", VacationDays: nil},
 			},
 			args: args{
 				start:    date("2020-04-01"),
@@ -59,30 +52,15 @@ func TestPlanner_Plan(t *testing.T) {
 					Secondary: "b@test.ch",
 				},
 			},
+			wantErr: false,
 		},
 		{
 			name: "Should not schedule Primary on holiday days",
 			employees: []apis.Employee{
-				{
-					ID:           "a@test.ch",
-					Name:         "a",
-					VacationDays: []string{"2020-04-01"},
-				},
-				{
-					ID:           "b@test.ch",
-					Name:         "b",
-					VacationDays: nil,
-				},
-				{
-					ID:           "c@test.ch",
-					Name:         "c",
-					VacationDays: nil,
-				},
-				{
-					ID:           "d@test.ch",
-					Name:         "d",
-					VacationDays: nil,
-				},
+				{ID: "a@test.ch", Name: "a", VacationDays: []string{"2020-04-01"}},
+				{ID: "b@test.ch", Name: "b", VacationDays: nil},
+				{ID: "c@test.ch", Name: "c", VacationDays: nil},
+				{ID: "d@test.ch", Name: "d", VacationDays: nil},
 			},
 			args: args{
 				start:    date("2020-04-01"),
@@ -115,30 +93,15 @@ func TestPlanner_Plan(t *testing.T) {
 					Secondary: "a@test.ch",
 				},
 			},
+			wantErr: false,
 		},
 		{
 			name: "Should not schedule Secondary on holiday days",
 			employees: []apis.Employee{
-				{
-					ID:           "a@test.ch",
-					Name:         "a",
-					VacationDays: nil,
-				},
-				{
-					ID:           "b@test.ch",
-					Name:         "b",
-					VacationDays: []string{"2020-04-01"},
-				},
-				{
-					ID:           "c@test.ch",
-					Name:         "c",
-					VacationDays: nil,
-				},
-				{
-					ID:           "d@test.ch",
-					Name:         "d",
-					VacationDays: nil,
-				},
+				{ID: "a@test.ch", Name: "a", VacationDays: nil},
+				{ID: "b@test.ch", Name: "b", VacationDays: []string{"2020-04-01"}},
+				{ID: "c@test.ch", Name: "c", VacationDays: nil},
+				{ID: "d@test.ch", Name: "d", VacationDays: nil},
 			},
 			args: args{
 				start:    date("2020-04-01"),
@@ -171,12 +134,49 @@ func TestPlanner_Plan(t *testing.T) {
 					Secondary: "b@test.ch",
 				},
 			},
+			wantErr: false,
+		},
+		{
+			name: "Should return an error if can not find next available duty",
+			employees: []apis.Employee{
+				{ID: "a@test.ch", Name: "a", VacationDays: []string{"2020-04-01"}},
+				{ID: "b@test.ch", Name: "b", VacationDays: []string{"2020-04-01"}},
+				{ID: "c@test.ch", Name: "c", VacationDays: []string{"2020-04-01"}},
+				{ID: "d@test.ch", Name: "d", VacationDays: []string{"2020-04-01"}},
+			},
+			args: args{
+				start:    date("2020-04-01"),
+				end:      date("2020-04-04"),
+				rotation: 24 * time.Hour,
+			},
+			want:    nil,
+			wantErr: true,
+		},
+		{
+			name: "Should return an error if can not find next secondary",
+			employees: []apis.Employee{
+				{ID: "a@test.ch", Name: "a", VacationDays: nil},
+				{ID: "b@test.ch", Name: "b", VacationDays: []string{"2020-04-01"}},
+				{ID: "c@test.ch", Name: "c", VacationDays: []string{"2020-04-01"}},
+				{ID: "d@test.ch", Name: "d", VacationDays: []string{"2020-04-01"}},
+			},
+			args: args{
+				start:    date("2020-04-01"),
+				end:      date("2020-04-04"),
+				rotation: 24 * time.Hour,
+			},
+			want:    nil,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			planner := NewDefaultShiftPlanner(tt.employees)
-			if got := planner.Plan(tt.args.start, tt.args.end, tt.args.rotation); !reflect.DeepEqual(got, tt.want) {
+			got, err := planner.Plan(tt.args.start, tt.args.end, tt.args.rotation)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Plan() error = %v, wantErr %v", err, tt.wantErr)
+			}
+			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Plan() = %v, want %v", got, tt.want)
 			}
 		})

@@ -14,8 +14,8 @@ type DefaultRule struct {
 	fn func(e apis.Employee, _ []apis.Shift, start time.Time, end time.Time) bool
 }
 
-func (d *DefaultRule) Match(primary apis.Employee, shifts []apis.Shift, start time.Time, end time.Time) bool {
-	return d.fn(primary, shifts, start, end)
+func (d *DefaultRule) Match(employee apis.Employee, shifts []apis.Shift, start time.Time, end time.Time) bool {
+	return d.fn(employee, shifts, start, end)
 }
 
 func VacationConflict() *DefaultRule {
