@@ -7,7 +7,7 @@ import (
 	"github.com/orltom/on-call-schedule/pkg/apis"
 )
 
-func TestTableExporter_Write(t *testing.T) {
+func TestJSONExporter_Write(t *testing.T) {
 	type args struct {
 		plan []apis.Shift
 	}
@@ -18,7 +18,7 @@ func TestTableExporter_Write(t *testing.T) {
 		wantErr    bool
 	}{
 		{
-			name: "Print table result according shift plan",
+			name: "Should create valid CSV",
 			args: args{
 				plan: []apis.Shift{
 					{
@@ -35,24 +35,19 @@ func TestTableExporter_Write(t *testing.T) {
 					},
 				},
 			},
-			wantWriter: `From       | To         | Primary        | Secondary
-----------------------------------------------------------
-2024-12-25 | 2024-12-26 | a              | b             
-2024-12-26 | 2024-12-27 | c              | d             
-
-`,
-			wantErr: false,
-		},
-		{
-			name: "When plan is empty, print table header",
-			args: args{
-				plan: []apis.Shift{},
-			},
-			wantWriter: "From       | To         | Primary        | Secondary\n----------------------------------------------------------\n\n",
+			wantWriter: `[{"start":"2024-12-25T00:00:00Z","end":"2024-12-26T00:00:00Z","primary":"a","secondary":"b"},{"start":"2024-12-26T00:00:00Z","end":"2024-12-27T00:00:00Z","primary":"c","secondary":"d"}]`,
 			wantErr:    false,
 		},
 		{
-			name: "When plan is nil, throw an error",
+			name: "When plan is empty, throw an error",
+			args: args{
+				plan: []apis.Shift{},
+			},
+			wantWriter: "[]",
+			wantErr:    false,
+		},
+		{
+			name: "When plan is nil, do nothing",
 			args: args{
 				plan: nil,
 			},
@@ -62,14 +57,14 @@ func TestTableExporter_Write(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			e := NewTableExporter()
+			e := NewJSONExporter()
 			writer := &strings.Builder{}
 			err := e.Write(tt.args.plan, writer)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Write() error = %v, wantErr %v", err, tt.wantErr)
 			}
-			if gotWriter := writer.String(); gotWriter != tt.wantWriter {
-				t.Errorf("Write() gotWriter = %v, want %v", gotWriter, tt.wantWriter)
+			if content := writer.String(); content != tt.wantWriter {
+				t.Errorf("Write() json = %v, want = %v", content, tt.wantWriter)
 			}
 		})
 	}

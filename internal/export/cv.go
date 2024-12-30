@@ -8,6 +8,8 @@ import (
 	"github.com/orltom/on-call-schedule/pkg/apis"
 )
 
+var _ apis.Exporter = &CVSExporter{}
+
 type CVSExporter struct{}
 
 func (c *CVSExporter) Write(shifts []apis.Shift, writer io.Writer) error {

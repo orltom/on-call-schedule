@@ -31,6 +31,10 @@ func NewTableExporter() *TableExporter {
 }
 
 func (e *TableExporter) Write(plan []apis.Shift, writer io.Writer) error {
+	if plan == nil {
+		return errors.New("shifts must not be nil")
+	}
+
 	if err := e.template.Execute(writer, plan); err != nil {
 		return fmt.Errorf("can not generate CVS: %w", err)
 	}
