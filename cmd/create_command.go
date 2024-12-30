@@ -42,27 +42,32 @@ func RunCreateShiftPlan(arguments []string) error {
 	duration := new(int)
 	teamFilePath := new(string)
 	transform := Table
+	var showHelp bool
 
 	createCommand := flag.NewFlagSet("create", flag.ExitOnError)
+	createCommand.BoolVar(&showHelp, "h", false, "help for ocsctl create")
 	createCommand.IntVar(duration, "rotation", 7*24, "rotation time in hours.")
 	createCommand.Func("start", "(required) start time of the schedule plan", cli.TimeValueVar(str))
 	createCommand.Func("end", "(required) end time of the schedule plan", cli.TimeValueVar(end))
 	createCommand.Func("team-file", "(required) path to the file that contain all on-call duties", cli.FilePathVar(teamFilePath))
 	createCommand.Func("output", "output format. One of (cvs, table)", cli.EnumValueVar(enums, &transform))
 	createCommand.Usage = func() {
-		fmt.Fprintf(os.Stderr, `Create on-call shift plan
-
-Usage:
-  ocs create [flags]
-
-Flags:
-`)
-		createCommand.PrintDefaults()
+		fmt.Fprintf(os.Stdout, "Create on-call schedule\n")
+		fmt.Fprintf(os.Stdout, "\nUsage\n")
+		fmt.Fprintf(os.Stdout, "  %s create [flags]\n", os.Args[0])
+		fmt.Fprintf(os.Stdout, "\nFlags:\n")
+		flag.PrintDefaults()
+		fmt.Fprintf(os.Stdout, "\nUse \"%s create -h\" for more information about a command\n", os.Args[0])
 	}
 
 	if err := createCommand.Parse(arguments); err != nil {
 		createCommand.Usage()
 		return fmt.Errorf("could not parse CLI arguments: %w", err)
+	}
+
+	if showHelp {
+		createCommand.Usage()
+		return nil
 	}
 
 	// check that the required flags are set...
