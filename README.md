@@ -18,7 +18,11 @@ Here is an example of how to create an on-call duty plan
 }
 EOL
 
-./ocs create --start "2024-01-01 00:00:00" --end "2024-03-29 00:00:00" --team-file demo.json --output table
+./ocsctl create \
+        --start "2024-01-01 00:00:00" \
+        --end "2024-03-29 00:00:00" \
+        --team-file demo.json \
+        --output table
 ```
 
 ## Contributing

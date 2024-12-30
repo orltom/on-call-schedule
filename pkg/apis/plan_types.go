@@ -6,10 +6,10 @@ import (
 )
 
 type Shift struct {
-	Start     time.Time
-	End       time.Time
-	Primary   EmployeeID
-	Secondary EmployeeID
+	Start     time.Time  `json:"start"`
+	End       time.Time  `json:"end"`
+	Primary   EmployeeID `json:"primary"`
+	Secondary EmployeeID `json:"secondary"`
 }
 
 type Rule interface {
@@ -17,5 +17,5 @@ type Rule interface {
 }
 
 type Exporter interface {
-	Write(shifts []Shift, writer io.Writer) error
+	Write(plan []Shift, writer io.Writer) error
 }

@@ -24,16 +24,20 @@ type Converter int
 const (
 	CVS Converter = iota
 	Table
+	JSON
 )
 
 func RunCreateShiftPlan(arguments []string) error {
-	enums := map[string]Converter{"CVS": CVS, "Table": Table}
+	enums := map[string]Converter{"CVS": CVS, "Table": Table, "json": JSON}
 	converters := map[Converter]func() apis.Exporter{
 		Table: func() apis.Exporter {
 			return export.NewTableExporter()
 		},
 		CVS: func() apis.Exporter {
 			return export.NewCVSCExporter()
+		},
+		JSON: func() apis.Exporter {
+			return export.NewJSONExporter()
 		},
 	}
 
@@ -50,7 +54,7 @@ func RunCreateShiftPlan(arguments []string) error {
 	createCommand.Func("start", "(required) start time of the schedule plan", cli.TimeValueVar(str))
 	createCommand.Func("end", "(required) end time of the schedule plan", cli.TimeValueVar(end))
 	createCommand.Func("team-file", "(required) path to the file that contain all on-call duties", cli.FilePathVar(teamFilePath))
-	createCommand.Func("output", "output format. One of (cvs, table)", cli.EnumValueVar(enums, &transform))
+	createCommand.Func("output", "output format. One of (cvs, table, json)", cli.EnumValueVar(enums, &transform))
 	createCommand.Usage = func() {
 		fmt.Fprintf(os.Stdout, "Create on-call schedule\n")
 		fmt.Fprintf(os.Stdout, "\nUsage\n")
