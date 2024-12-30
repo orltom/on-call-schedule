@@ -2,15 +2,25 @@
 [![License](https://img.shields.io/github/license/orltom/on-call-schedule)](/LICENSE)
 
 # On-Call Schedule
-This project is a tool for creating on-call schedules for team members. It allows users to define their own rules for 
-scheduling or use a predefined set of standard rules. Important factors such as absences due to holidays or 
-other time off will be considered.
+It helps to create or synchronize on-call schedules for team members, allowing users to define custom rules or use 
+predefined ones. Important factors, such as absences due to holidays or other time off, are automatically considered.
 
-# Enhancements 
-Future enhancements include the ability to export schedules as CSV files or integrate directly with calendar services.
+## Usage
+Here is an example of how to create an on-call duty plan
+```shell
+> cat > demo.json << EOL
+{
+  "employees": [
+    {"id": "joe@example.com", "name": "Joe"},
+    {"id": "jan@example.com", "name": "Jan", "vacationDays": ["2024-01-06","2024-01-07"]},
+    {"id": "lee@example.com", "name": "Lee"}
+  ]
+}
+EOL
+
+./ocs create --start "2024-01-01 00:00:00" --end "2024-03-29 00:00:00" --team-file demo.json --output table
+```
 
 ## Contributing
-Please use the GitHub issue tracker to submit bugs or request features.
-
-
-
+Contributions are welcome in any form, be it code, logic, documentation, examples, requests, bug reports, ideas or
+anything else that will help this project move forward.

@@ -1,0 +1,5 @@
+From       | To         | Primary        | Secondary
+----------------------------------------------------------
+{{ range . -}}
+{{ dateOnly .Start }} | {{ dateOnly .End }} | {{ trunc .Primary }} | {{ trunc .Secondary }}
+{{ end }}

@@ -1,4 +1,4 @@
-package shift
+package shiftplan
 
 import (
 	"reflect"
@@ -8,7 +8,7 @@ import (
 	"github.com/orltom/on-call-schedule/pkg/apis"
 )
 
-func TestNewDefaultShiftRotationShiftRotation_Plan(t *testing.T) {
+func TestPlanner_Plan(t *testing.T) {
 	type args struct {
 		start    time.Time
 		end      time.Time
@@ -21,7 +21,7 @@ func TestNewDefaultShiftRotationShiftRotation_Plan(t *testing.T) {
 		want      []apis.Shift
 	}{
 		{
-			name: "Daily Schedule without vacation days",
+			name: "Without declared holidays, a daily schedule should be generated according to the order of the employees",
 			employees: []apis.Employee{
 				{
 					ID:           "a@test.ch",
@@ -66,7 +66,7 @@ func TestNewDefaultShiftRotationShiftRotation_Plan(t *testing.T) {
 				{
 					ID:           "a@test.ch",
 					Name:         "a",
-					VacationDays: []time.Time{date("2020-04-01")},
+					VacationDays: []string{"2020-04-01"},
 				},
 				{
 					ID:           "b@test.ch",
@@ -127,7 +127,7 @@ func TestNewDefaultShiftRotationShiftRotation_Plan(t *testing.T) {
 				{
 					ID:           "b@test.ch",
 					Name:         "b",
-					VacationDays: []time.Time{date("2020-04-01")},
+					VacationDays: []string{"2020-04-01"},
 				},
 				{
 					ID:           "c@test.ch",
@@ -175,8 +175,8 @@ func TestNewDefaultShiftRotationShiftRotation_Plan(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			shiftRotation := NewDefaultShiftRotation(tt.employees)
-			if got := shiftRotation.Plan(tt.args.start, tt.args.end, tt.args.rotation); !reflect.DeepEqual(got, tt.want) {
+			planner := NewDefaultShiftPlanner(tt.employees)
+			if got := planner.Plan(tt.args.start, tt.args.end, tt.args.rotation); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Plan() = %v, want %v", got, tt.want)
 			}
 		})
