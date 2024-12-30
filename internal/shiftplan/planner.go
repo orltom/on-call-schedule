@@ -1,6 +1,7 @@
 package shiftplan
 
 import (
+	"fmt"
 	"slices"
 	"time"
 
@@ -16,8 +17,8 @@ type ShiftPlanner struct {
 func NewDefaultShiftPlanner(team []apis.Employee) *ShiftPlanner {
 	return NewShiftPlanner(
 		team,
-		[]apis.Rule{VacationConflict(), InvolvedInLastSift()},
-		[]apis.Rule{VacationConflict(), InvolvedInLastSift()},
+		[]apis.Rule{VacationConflict()},
+		[]apis.Rule{VacationConflict()},
 	)
 }
 
@@ -29,16 +30,22 @@ func NewShiftPlanner(team []apis.Employee, primaryConflictCheckers []apis.Rule, 
 	}
 }
 
-func (p *ShiftPlanner) Plan(start time.Time, end time.Time, rotation time.Duration) []apis.Shift {
+func (p *ShiftPlanner) Plan(start time.Time, end time.Time, rotation time.Duration) ([]apis.Shift, error) {
 	var plan []apis.Shift
 
 	for s := start; s.Before(end); s = s.Add(rotation) {
 		e := s.Add(rotation)
 
-		primary := p.findPrimary(plan, s, e)
+		primary, err := p.findPrimary(plan, s, e)
+		if err != nil {
+			return nil, err
+		}
 		p.team = remove(p.team, primary)
 
-		secondary := p.findSecondary(plan, s, e)
+		secondary, err := p.findSecondary(plan, s, e)
+		if err != nil {
+			return nil, err
+		}
 		p.team = remove(p.team, secondary)
 
 		shift := apis.Shift{Start: s, End: e, Primary: primary.ID, Secondary: secondary.ID}
@@ -47,27 +54,27 @@ func (p *ShiftPlanner) Plan(start time.Time, end time.Time, rotation time.Durati
 		p.team = append(p.team, secondary, primary)
 	}
 
-	return plan
+	return plan, nil
 }
 
-func (p *ShiftPlanner) findPrimary(shifts []apis.Shift, start time.Time, end time.Time) apis.Employee {
+func (p *ShiftPlanner) findPrimary(shifts []apis.Shift, start time.Time, end time.Time) (apis.Employee, error) {
 	return p.find(shifts, start, end, p.primaryConflictCheckers)
 }
 
-func (p *ShiftPlanner) findSecondary(shifts []apis.Shift, start time.Time, end time.Time) apis.Employee {
+func (p *ShiftPlanner) findSecondary(shifts []apis.Shift, start time.Time, end time.Time) (apis.Employee, error) {
 	return p.find(shifts, start, end, p.secondaryConflictChecker)
 }
 
-func (p *ShiftPlanner) find(shifts []apis.Shift, start time.Time, end time.Time, checkers []apis.Rule) apis.Employee {
+func (p *ShiftPlanner) find(shifts []apis.Shift, start time.Time, end time.Time, checkers []apis.Rule) (apis.Employee, error) {
 	for idx := range p.team {
 		if p.hasConflict(p.team[idx], checkers, shifts, start, end) {
 			continue
 		}
 
-		return p.team[idx]
+		return p.team[idx], nil
 	}
 
-	return p.team[0]
+	return apis.Employee{}, fmt.Errorf("could not find available duty between %s and %s", start, end)
 }
 
 func (p *ShiftPlanner) hasConflict(e apis.Employee, conflictCheckers []apis.Rule, shifts []apis.Shift, start time.Time, end time.Time) bool {

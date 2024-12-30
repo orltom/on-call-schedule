@@ -13,7 +13,7 @@ type Shift struct {
 }
 
 type Rule interface {
-	Match(primary Employee, shifts []Shift, start time.Time, end time.Time) bool
+	Match(employee Employee, shifts []Shift, start time.Time, end time.Time) bool
 }
 
 type Exporter interface {

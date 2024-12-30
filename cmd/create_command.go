@@ -102,7 +102,11 @@ func RunCreateShiftPlan(arguments []string) error {
 		return fmt.Errorf("%w: invalid team config file: %w", ErrInvalidArgument, err)
 	}
 
-	plan := shiftplan.NewDefaultShiftPlanner(team.Employees).Plan(*str, *end, time.Duration(*duration)*time.Hour)
+	plan, err := shiftplan.NewDefaultShiftPlanner(team.Employees).Plan(*str, *end, time.Duration(*duration)*time.Hour)
+	if err != nil {
+		return fmt.Errorf("can not create on-call schedule: %w", err)
+	}
+
 	if err := converters[transform]().Write(plan, os.Stdout); err != nil {
 		return fmt.Errorf("unexpecting error: %w", err)
 	}
