@@ -21,7 +21,7 @@ func (d *DefaultRule) Match(employee apis.Employee, shifts []apis.Shift, start t
 func VacationConflict() *DefaultRule {
 	return &DefaultRule{
 		fn: func(e apis.Employee, _ []apis.Shift, start time.Time, end time.Time) bool {
-			days := e.Vacations()
+			days := e.VacationDays
 			for vIdx := range days {
 				day := days[vIdx]
 				if (day.After(start) && day.Before(end)) || day.Equal(start) || day.Equal(end) {

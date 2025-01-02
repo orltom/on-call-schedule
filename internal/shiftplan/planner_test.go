@@ -57,7 +57,7 @@ func TestPlanner_Plan(t *testing.T) {
 		{
 			name: "Should not schedule Primary on holiday days",
 			employees: []apis.Employee{
-				{ID: "a@test.ch", Name: "a", VacationDays: []string{"2020-04-01"}},
+				{ID: "a@test.ch", Name: "a", VacationDays: vacationDays("2020-04-01")},
 				{ID: "b@test.ch", Name: "b", VacationDays: nil},
 				{ID: "c@test.ch", Name: "c", VacationDays: nil},
 				{ID: "d@test.ch", Name: "d", VacationDays: nil},
@@ -99,7 +99,7 @@ func TestPlanner_Plan(t *testing.T) {
 			name: "Should not schedule Secondary on holiday days",
 			employees: []apis.Employee{
 				{ID: "a@test.ch", Name: "a", VacationDays: nil},
-				{ID: "b@test.ch", Name: "b", VacationDays: []string{"2020-04-01"}},
+				{ID: "b@test.ch", Name: "b", VacationDays: vacationDays("2020-04-01")},
 				{ID: "c@test.ch", Name: "c", VacationDays: nil},
 				{ID: "d@test.ch", Name: "d", VacationDays: nil},
 			},
@@ -139,10 +139,10 @@ func TestPlanner_Plan(t *testing.T) {
 		{
 			name: "Should return an error if can not find next available duty",
 			employees: []apis.Employee{
-				{ID: "a@test.ch", Name: "a", VacationDays: []string{"2020-04-01"}},
-				{ID: "b@test.ch", Name: "b", VacationDays: []string{"2020-04-01"}},
-				{ID: "c@test.ch", Name: "c", VacationDays: []string{"2020-04-01"}},
-				{ID: "d@test.ch", Name: "d", VacationDays: []string{"2020-04-01"}},
+				{ID: "a@test.ch", Name: "a", VacationDays: vacationDays("2020-04-01")},
+				{ID: "b@test.ch", Name: "b", VacationDays: vacationDays("2020-04-01")},
+				{ID: "c@test.ch", Name: "c", VacationDays: vacationDays("2020-04-01")},
+				{ID: "d@test.ch", Name: "d", VacationDays: vacationDays("2020-04-01")},
 			},
 			args: args{
 				start:    date("2020-04-01"),
@@ -156,9 +156,9 @@ func TestPlanner_Plan(t *testing.T) {
 			name: "Should return an error if can not find next secondary",
 			employees: []apis.Employee{
 				{ID: "a@test.ch", Name: "a", VacationDays: nil},
-				{ID: "b@test.ch", Name: "b", VacationDays: []string{"2020-04-01"}},
-				{ID: "c@test.ch", Name: "c", VacationDays: []string{"2020-04-01"}},
-				{ID: "d@test.ch", Name: "d", VacationDays: []string{"2020-04-01"}},
+				{ID: "b@test.ch", Name: "b", VacationDays: vacationDays("2020-04-01")},
+				{ID: "c@test.ch", Name: "c", VacationDays: vacationDays("2020-04-01")},
+				{ID: "d@test.ch", Name: "d", VacationDays: vacationDays("2020-04-01")},
 			},
 			args: args{
 				start:    date("2020-04-01"),
@@ -190,4 +190,13 @@ func date(s string) time.Time {
 	}
 
 	return t
+}
+
+func vacationDays(days ...string) []apis.VacationDay {
+	var tmp = make([]apis.VacationDay, len(days))
+	for _, day := range days {
+		tmp = append(tmp, apis.VacationDay{Time: date(day)})
+	}
+
+	return tmp
 }
