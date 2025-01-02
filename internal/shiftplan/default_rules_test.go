@@ -7,7 +7,7 @@ import (
 	"github.com/orltom/on-call-schedule/pkg/apis"
 )
 
-func TestVacationConflict(t *testing.T) {
+func TestNewNoVacationOverlap(t *testing.T) {
 	type args struct {
 		employee apis.Employee
 		start    time.Time
@@ -48,7 +48,7 @@ func TestVacationConflict(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			d := VacationConflict()
+			d := NewNoVacationOverlap()
 			if got := d.Match(tt.args.employee, nil, tt.args.start, tt.args.end); got != tt.want {
 				t.Errorf("Match() = %v, want %v", got, tt.want)
 			}
@@ -56,7 +56,7 @@ func TestVacationConflict(t *testing.T) {
 	}
 }
 
-func TestInvolvedInLastSift(t *testing.T) {
+func TestNewMinimumWeekGap(t *testing.T) {
 	type args struct {
 		employee apis.Employee
 		shifts   []apis.Shift
@@ -110,7 +110,7 @@ func TestInvolvedInLastSift(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			d := InvolvedInLastSift()
+			d := NewMinimumGapBetweenShifts(1)
 			if got := d.Match(tt.args.employee, tt.args.shifts, time.Now(), time.Now()); got != tt.want {
 				t.Errorf("Match() = %v, want %v", got, tt.want)
 			}

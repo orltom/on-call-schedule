@@ -17,16 +17,25 @@ type ShiftPlanner struct {
 func NewDefaultShiftPlanner(team []apis.Employee) *ShiftPlanner {
 	return NewShiftPlanner(
 		team,
-		[]apis.Rule{VacationConflict()},
-		[]apis.Rule{VacationConflict()},
+		[]apis.Rule{NewNoVacationOverlap()},
+		[]apis.Rule{NewNoVacationOverlap()},
 	)
 }
 
 func NewShiftPlanner(team []apis.Employee, primaryConflictCheckers []apis.Rule, secondaryConflictCheckers []apis.Rule) *ShiftPlanner {
+	t := make([]apis.Employee, len(team))
+	copy(t, team)
+
+	p := make([]apis.Rule, len(primaryConflictCheckers))
+	copy(p, primaryConflictCheckers)
+
+	s := make([]apis.Rule, len(secondaryConflictCheckers))
+	copy(s, secondaryConflictCheckers)
+
 	return &ShiftPlanner{
-		team:                     team,
-		primaryConflictCheckers:  primaryConflictCheckers,
-		secondaryConflictChecker: secondaryConflictCheckers,
+		team:                     t,
+		primaryConflictCheckers:  p,
+		secondaryConflictChecker: s,
 	}
 }
 
