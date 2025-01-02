@@ -30,11 +30,11 @@ func NewShiftPlanner(team []apis.Employee, primaryConflictCheckers []apis.Rule, 
 	}
 }
 
-func (p *ShiftPlanner) Plan(start time.Time, end time.Time, rotation time.Duration) ([]apis.Shift, error) {
+func (p *ShiftPlanner) Plan(start time.Time, end time.Time, duration time.Duration) ([]apis.Shift, error) {
 	var plan []apis.Shift
 
-	for s := start; s.Before(end); s = s.Add(rotation) {
-		e := s.Add(rotation)
+	for s := start; s.Before(end); s = s.Add(duration) {
+		e := s.Add(duration)
 
 		primary, err := p.findPrimary(plan, s, e)
 		if err != nil {

@@ -21,6 +21,7 @@ EOL
 ./ocsctl create \
         --start "2024-01-01 00:00:00" \
         --end "2024-03-29 00:00:00" \
+        --duration 168 \
         --team-file demo.json \
         --output table
 ```
