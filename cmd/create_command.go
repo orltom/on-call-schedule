@@ -50,7 +50,7 @@ func RunCreateShiftPlan(arguments []string) error {
 
 	createCommand := flag.NewFlagSet("create", flag.ExitOnError)
 	createCommand.BoolVar(&showHelp, "h", false, "help for ocsctl create")
-	createCommand.IntVar(duration, "rotation", 7*24, "rotation time in hours.")
+	createCommand.IntVar(duration, "duration", 7*24, "shift duration in hours.")
 	createCommand.Func("start", "(required) start time of the schedule plan", cli.TimeValueVar(str))
 	createCommand.Func("end", "(required) end time of the schedule plan", cli.TimeValueVar(end))
 	createCommand.Func("team-file", "(required) path to the file that contain all on-call duties", cli.FilePathVar(teamFilePath))

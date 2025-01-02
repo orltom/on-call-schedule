@@ -12,7 +12,7 @@ func TestPlanner_Plan(t *testing.T) {
 	type args struct {
 		start    time.Time
 		end      time.Time
-		rotation time.Duration
+		duration time.Duration
 	}
 	tests := []struct {
 		name      string
@@ -30,7 +30,7 @@ func TestPlanner_Plan(t *testing.T) {
 			args: args{
 				start:    date("2020-04-01"),
 				end:      date("2020-04-04"),
-				rotation: 24 * time.Hour,
+				duration: 24 * time.Hour,
 			},
 			want: []apis.Shift{
 				{
@@ -65,7 +65,7 @@ func TestPlanner_Plan(t *testing.T) {
 			args: args{
 				start:    date("2020-04-01"),
 				end:      date("2020-04-05"),
-				rotation: 24 * time.Hour,
+				duration: 24 * time.Hour,
 			},
 			want: []apis.Shift{
 				{
@@ -106,7 +106,7 @@ func TestPlanner_Plan(t *testing.T) {
 			args: args{
 				start:    date("2020-04-01"),
 				end:      date("2020-04-05"),
-				rotation: 24 * time.Hour,
+				duration: 24 * time.Hour,
 			},
 			want: []apis.Shift{
 				{
@@ -147,7 +147,7 @@ func TestPlanner_Plan(t *testing.T) {
 			args: args{
 				start:    date("2020-04-01"),
 				end:      date("2020-04-04"),
-				rotation: 24 * time.Hour,
+				duration: 24 * time.Hour,
 			},
 			want:    nil,
 			wantErr: true,
@@ -163,7 +163,7 @@ func TestPlanner_Plan(t *testing.T) {
 			args: args{
 				start:    date("2020-04-01"),
 				end:      date("2020-04-04"),
-				rotation: 24 * time.Hour,
+				duration: 24 * time.Hour,
 			},
 			want:    nil,
 			wantErr: true,
@@ -172,7 +172,7 @@ func TestPlanner_Plan(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			planner := NewDefaultShiftPlanner(tt.employees)
-			got, err := planner.Plan(tt.args.start, tt.args.end, tt.args.rotation)
+			got, err := planner.Plan(tt.args.start, tt.args.end, tt.args.duration)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Plan() error = %v, wantErr %v", err, tt.wantErr)
 			}
