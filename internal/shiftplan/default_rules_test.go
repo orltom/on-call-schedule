@@ -7,7 +7,7 @@ import (
 	"github.com/orltom/on-call-schedule/pkg/apis"
 )
 
-func TestVacationConflict(t *testing.T) {
+func TestNewNoVacationOverlap(t *testing.T) {
 	type args struct {
 		employee apis.Employee
 		start    time.Time
@@ -48,7 +48,7 @@ func TestVacationConflict(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			d := VacationConflict()
+			d := NewNoVacationOverlap()
 			if got := d.Match(tt.args.employee, nil, tt.args.start, tt.args.end); got != tt.want {
 				t.Errorf("Match() = %v, want %v", got, tt.want)
 			}
@@ -56,7 +56,7 @@ func TestVacationConflict(t *testing.T) {
 	}
 }
 
-func TestInvolvedInLastSift(t *testing.T) {
+func TestNewMinimumPrimaryGapBetweenShifts(t *testing.T) {
 	type args struct {
 		employee apis.Employee
 		shifts   []apis.Shift
@@ -97,6 +97,68 @@ func TestInvolvedInLastSift(t *testing.T) {
 			want: true,
 		},
 		{
+			name: "Should not detect conflict if employee was on last shift as secondary",
+			args: args{
+				employee: apis.Employee{ID: "a", Name: "a", VacationDays: nil},
+				shifts: []apis.Shift{{
+					Primary:   "c",
+					Secondary: "a",
+				}},
+			},
+			want: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			d := NewMinimumPrimaryGapBetweenShifts(4)
+			if got := d.Match(tt.args.employee, tt.args.shifts, time.Now(), time.Now()); got != tt.want {
+				t.Errorf("Match() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestNewMinimumSecondaryGapBetweenShifts(t *testing.T) {
+	type args struct {
+		employee apis.Employee
+		shifts   []apis.Shift
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		{
+			name: "Should not detect conflict when start with the first schedule shift",
+			args: args{
+				employee: apis.Employee{ID: "a", Name: "a", VacationDays: nil},
+				shifts:   nil,
+			},
+			want: false,
+		},
+		{
+			name: "Should not detect conflict if employee was not on last shift",
+			args: args{
+				employee: apis.Employee{ID: "a", Name: "a", VacationDays: nil},
+				shifts: []apis.Shift{{
+					Primary:   "b",
+					Secondary: "c",
+				}},
+			},
+			want: false,
+		},
+		{
+			name: "Should not detect conflict if employee was on last shift as primary",
+			args: args{
+				employee: apis.Employee{ID: "a", Name: "a", VacationDays: nil},
+				shifts: []apis.Shift{{
+					Primary:   "a",
+					Secondary: "b",
+				}},
+			},
+			want: false,
+		},
+		{
 			name: "Should detect conflict if employee was on last shift as secondary",
 			args: args{
 				employee: apis.Employee{ID: "a", Name: "a", VacationDays: nil},
@@ -110,7 +172,7 @@ func TestInvolvedInLastSift(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			d := InvolvedInLastSift()
+			d := NewMinimumSecondaryGapBetweenShifts(4)
 			if got := d.Match(tt.args.employee, tt.args.shifts, time.Now(), time.Now()); got != tt.want {
 				t.Errorf("Match() = %v, want %v", got, tt.want)
 			}
