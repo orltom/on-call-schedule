@@ -137,6 +137,6 @@ issues:
       linters:
         - funlen
         - dupl
-    - path: pkg/apis/team_types.go
+    - path: pkg/apis/team_methods.go
       linters:
         - wrapcheck

@@ -21,7 +21,7 @@ func TestVacationConflict(t *testing.T) {
 		{
 			name: "Should detect conflict if employee has holiday between scheduled shift",
 			args: args{
-				employee: apis.Employee{ID: "a", Name: "a", VacationDays: []string{"2024-01-01"}},
+				employee: apis.Employee{ID: "a", Name: "a", VacationDays: vacationDays("2024-01-01")},
 				start:    date("2024-01-01"),
 				end:      date("2024-01-02"),
 			},
@@ -39,7 +39,7 @@ func TestVacationConflict(t *testing.T) {
 		{
 			name: "Should not detect conflict if employee has holiday outside scheduled shift",
 			args: args{
-				employee: apis.Employee{ID: "a", Name: "a", VacationDays: []string{"2024-01-03"}},
+				employee: apis.Employee{ID: "a", Name: "a", VacationDays: vacationDays("2024-01-03")},
 				start:    date("2024-01-01"),
 				end:      date("2024-01-02"),
 			},
