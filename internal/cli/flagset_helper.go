@@ -10,14 +10,21 @@ import (
 	"time"
 )
 
-func IsFlagPassed(f *flag.FlagSet, name string) bool {
-	found := false
-	f.Visit(func(f *flag.Flag) {
-		if f.Name == name {
-			found = true
-		}
+func RequiredFlagPassed(f *flag.FlagSet, names ...string) (bool, []string) {
+	var missedFlags []string
+	visited := make(map[string]bool)
+
+	f.Visit(func(fl *flag.Flag) {
+		visited[fl.Name] = true
 	})
-	return found
+
+	for _, name := range names {
+		if !visited[name] {
+			missedFlags = append(missedFlags, name)
+		}
+	}
+
+	return len(missedFlags) == 0, missedFlags
 }
 
 func TimeValueVar(t *time.Time) func(s string) error {
