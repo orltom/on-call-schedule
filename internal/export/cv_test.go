@@ -36,9 +36,9 @@ func TestCVSExporter_Write(t *testing.T) {
 					},
 				},
 			},
-			wantWriter: `from,to,primary,secondary
-"2024-12-25","2024-12-26","a","b"
-"2024-12-26","2024-12-27","c","d"
+			wantWriter: `Start,End,Primary,Secondary
+2024-12-25,2024-12-26,a,b
+2024-12-26,2024-12-27,c,d
 `,
 			wantErr: false,
 		},
@@ -47,7 +47,7 @@ func TestCVSExporter_Write(t *testing.T) {
 			args: args{
 				plan: []apis.Shift{},
 			},
-			wantWriter: "from,to,primary,secondary\n",
+			wantWriter: "Start,End,Primary,Secondary\n",
 			wantErr:    false,
 		},
 		{
@@ -55,7 +55,7 @@ func TestCVSExporter_Write(t *testing.T) {
 			args: args{
 				plan: nil,
 			},
-			wantWriter: "from,to,primary,secondary\n",
+			wantWriter: "Start,End,Primary,Secondary\n",
 			wantErr:    false,
 		},
 	}
