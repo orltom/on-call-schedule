@@ -13,6 +13,10 @@ var _ apis.Exporter = &JSONExporter{}
 
 type JSONExporter struct{}
 
+func NewJSONExporter() *JSONExporter {
+	return &JSONExporter{}
+}
+
 func (c *JSONExporter) Write(plan []apis.Shift, writer io.Writer) error {
 	if plan == nil {
 		return errors.New("plan must not be nil")
@@ -29,8 +33,4 @@ func (c *JSONExporter) Write(plan []apis.Shift, writer io.Writer) error {
 	}
 
 	return nil
-}
-
-func NewJSONExporter() *JSONExporter {
-	return &JSONExporter{}
 }

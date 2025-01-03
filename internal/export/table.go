@@ -44,14 +44,9 @@ func (e *TableExporter) Write(plan []apis.Shift, writer io.Writer) error {
 func truncate(item reflect.Value) (string, error) {
 	var maxLen = 15
 	v := fmt.Sprintf("%v", item.Interface())
-	if len(v) == maxLen {
-		return v, nil
-	}
-
 	if len(v) > maxLen {
 		return v[:12] + "...", nil
 	}
-
 	return v + strings.Repeat(" ", maxLen-len(v)-1), nil
 }
 
@@ -59,11 +54,9 @@ func formatDateOnly(item reflect.Value) (string, error) {
 	if item.Kind() != reflect.Struct {
 		return "", ErrNotDate
 	}
-
 	t, ok := item.Interface().(time.Time)
 	if !ok {
 		return "", ErrNotDate
 	}
-
 	return t.Format(time.DateOnly), nil
 }
