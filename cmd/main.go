@@ -4,6 +4,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"io"
 	"os"
 	"slices"
 )
@@ -13,7 +14,7 @@ var ErrCommandNotFound = errors.New("command not found")
 type command struct {
 	name        string
 	description string
-	run         func([]string) error
+	run         func(io.Writer, []string) error
 }
 
 func main() {
@@ -67,7 +68,7 @@ func runCommand(cmd string, commands []command) error {
 		return fmt.Errorf("%w: %s", ErrCommandNotFound, cmd)
 	}
 
-	if err := commands[cmdIdx].run(os.Args[2:]); err != nil {
+	if err := commands[cmdIdx].run(os.Stdout, os.Args[2:]); err != nil {
 		return fmt.Errorf("\n\n%w", err)
 	}
 
