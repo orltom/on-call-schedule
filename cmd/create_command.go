@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"io"
 	"os"
 	"strings"
 	"time"
@@ -22,7 +23,7 @@ const (
 	JSON
 )
 
-func RunCreateShiftPlan(arguments []string) error {
+func RunCreateShiftPlan(writer io.Writer, arguments []string) error {
 	enums := map[string]Format{"CVS": CVS, "Table": Table, "json": JSON}
 	exporters := map[Format]func() apis.Exporter{
 		Table: func() apis.Exporter {
@@ -55,12 +56,12 @@ func RunCreateShiftPlan(arguments []string) error {
 	createCommand.StringVar(primaryRules, "primary-rules", "vacation", "Rule to decide which employee should be on-call for the next shift")
 	createCommand.StringVar(secondaryRules, "secondary-rules", "vacation", "Rule to decide which employee should be on-call for the next shift")
 	createCommand.Usage = func() {
-		fmt.Fprintf(os.Stdout, "Create on-call schedule\n")
-		fmt.Fprintf(os.Stdout, "\nUsage\n")
-		fmt.Fprintf(os.Stdout, "  %s create [flags]\n", os.Args[0])
-		fmt.Fprintf(os.Stdout, "\nFlags:\n")
+		fmt.Fprintf(writer, "Create on-call schedule\n")
+		fmt.Fprintf(writer, "\nUsage\n")
+		fmt.Fprintf(writer, "  %s create [flags]\n", os.Args[0])
+		fmt.Fprintf(writer, "\nFlags:\n")
 		flag.PrintDefaults()
-		fmt.Fprintf(os.Stdout, "\nUse \"%s create -h\" for more information about a command\n", os.Args[0])
+		fmt.Fprintf(writer, "\nUse \"%s create -h\" for more information about a command\n", os.Args[0])
 	}
 
 	if err := createCommand.Parse(arguments); err != nil {
@@ -101,7 +102,7 @@ func RunCreateShiftPlan(arguments []string) error {
 		return fmt.Errorf("can not create on-call schedule: %w", err)
 	}
 
-	if err := exporters[outputFormat]().Write(plan, os.Stdout); err != nil {
+	if err := exporters[outputFormat]().Write(plan, writer); err != nil {
 		return fmt.Errorf("unexpecting error: %w", err)
 	}
 
