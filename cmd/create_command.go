@@ -64,7 +64,7 @@ func RunCreateShiftPlan(writer io.Writer, arguments []string) error {
 		fmt.Fprintf(writer, "\nUsage\n")
 		fmt.Fprintf(writer, "  %s create [flags]\n", os.Args[0])
 		fmt.Fprintf(writer, "\nFlags:\n")
-		flag.PrintDefaults()
+		createCommand.PrintDefaults()
 		fmt.Fprintf(writer, "\nUse \"%s create -h\" for more information about a command\n", os.Args[0])
 	}
 
