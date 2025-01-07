@@ -21,6 +21,7 @@ const (
 	CVS Format = iota
 	Table
 	JSON
+	ICS
 )
 
 func RunCreateShiftPlan(writer io.Writer, arguments []string) error {
@@ -34,6 +35,9 @@ func RunCreateShiftPlan(writer io.Writer, arguments []string) error {
 		},
 		JSON: func() apis.Exporter {
 			return export.NewJSONExporter()
+		},
+		ICS: func() apis.Exporter {
+			return export.NewICSExporter()
 		},
 	}
 
@@ -52,7 +56,7 @@ func RunCreateShiftPlan(writer io.Writer, arguments []string) error {
 	createCommand.Func("start", "(required) start time of the schedule plan", cli.TimeValueVar(start))
 	createCommand.Func("end", "(required) end time of the schedule plan", cli.TimeValueVar(end))
 	createCommand.Func("team-file", "(required) path to the file that contain all on-call duties", cli.FilePathVar(teamFilePath))
-	createCommand.Func("output", "output format. One of (cvs, table, json)", cli.EnumValueVar(enums, &outputFormat))
+	createCommand.Func("output", "output format. One of (cvs, table, json, ics)", cli.EnumValueVar(enums, &outputFormat))
 	createCommand.StringVar(primaryRules, "primary-rules", "vacation", "Rule to decide which employee should be on-call for the next shift")
 	createCommand.StringVar(secondaryRules, "secondary-rules", "vacation", "Rule to decide which employee should be on-call for the next shift")
 	createCommand.Usage = func() {

@@ -1,0 +1,29 @@
+{{- define "icalEvent" }}
+BEGIN:VEVENT
+UID:{{ .UID }}
+DTSTART:{{ .Start.Format "20060102T150405Z" }}
+DTEND:{{ .End.Format "20060102T150405Z" }}
+SUMMARY:{{ .Summary }}
+DESCRIPTION:Primary: {{ .Primary }}\nSecondary: {{ .Secondary }}
+CATEGORIES:{{ .Category }}
+ATTENDEE:mailto:{{ .Attendee }}
+X-COLOR:{{ .XColor }}
+BEGIN:VALARM
+TRIGGER:-PT8H
+ACTION:DISPLAY
+DESCRIPTION:Reminder: {{ .Summary }} starts in 8 hours.
+END:VALARM
+END:VEVENT
+{{ end -}}
+
+{{- define "icalCalendar" -}}
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//ocsctl//on-call-shift//EN
+CALSCALE:GREGORIAN
+{{ range . }}
+{{- template "icalEvent" . }}
+{{- end }}
+END:VCALENDAR
+
+{{- end -}}
