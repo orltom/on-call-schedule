@@ -8,10 +8,9 @@ syncing, inadequate handling of holidays, and inflexible scheduling rules.
 
 # ✨ Current Features
 - Custom Rule-Based On-Call Scheduling: Create on-call schedules based on your own rules or use default rules, such as holiday checkers.
-- Multiple Export Formats: Generate on-call schedules in various formats, including CSV and JSON
+- Multiple Export Formats: Generate on-call schedules in various formats, including CSV, iCalender and JSON
 
 # 🛠️ Planned Features
-- iCalender Export
 - Automatically generate on-call schedules by syncing with a shared group calendar.
 - Export schedules directly to popular incident management tools.
 
